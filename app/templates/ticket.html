@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="flex items-center justify-center min-h-screen p-6">
+
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+
+        <h1 class="text-3xl font-bold text-center mb-6">
+            Votre Ticket
+        </h1>
+
+        <div class="space-y-4">
+
+            <div>
+                <p class="text-gray-500">
+                    Numéro
+                </p>
+
+                <p class="text-2xl font-bold">
+                    {{ ticket.numero }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500">
+                    Position dans la file
+                </p>
+
+                <p class="text-xl">
+                    {{ ticket.position_file }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500">
+                    Temps estimé
+                </p>
+
+                <p class="text-xl">
+                    {{ ticket.temps_estime }} min
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500">
+                    Statut
+                </p>
+
+                <p class="text-green-600 font-semibold">
+                    {{ ticket.statut }}
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
