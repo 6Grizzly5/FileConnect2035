@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Display Smart Queue</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- AUTO REFRESH -->
+
+    <meta http-equiv="refresh" content="5">
+
+</head>
+
+<body class="
+    bg-[#F5F7FA]
+    min-h-screen
+    p-10
+">
+
+    <!-- HEADER -->
+
+    <div class="
+        flex
+        justify-between
+        items-center
+        mb-10
+    ">
+
+        <div>
+
+            <h1 class="
+                text-5xl
+                font-bold
+                text-blue-600
+            ">
+
+                Smart Queue 2035
+
+            </h1>
+
+            <p class="
+                text-gray-500
+                mt-2
+                text-xl
+            ">
+
+                Affichage des tickets
+
+            </p>
+
+        </div>
+
+        <div class="
+            text-right
+        ">
+
+            <div class="
+                text-gray-500
+                text-xl
+            ">
+
+                Ticket actuel
+
+            </div>
+
+            <div class="
+                text-7xl
+                font-bold
+                text-green-500
+            ">
+
+                {% if current %}
+
+                    {{ current.numero }}
+
+                {% else %}
+
+                    ---
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="
+        grid
+        grid-cols-3
+        gap-8
+    ">
+
+        <!-- CURRENT -->
+
+        <div class="
+            col-span-2
+            bg-white
+            rounded-3xl
+            p-10
+            shadow-xl
+        ">
+
+            <h2 class="
+                text-3xl
+                font-bold
+                mb-8
+            ">
+
+                En cours
+
+            </h2>
+
+            {% if current %}
+
+            <div class="
+                flex
+                justify-between
+                items-center
+            ">
+
+                <div>
+
+                    <div class="
+                        text-gray-500
+                        text-2xl
+                    ">
+
+                        Ticket
+
+                    </div>
+
+                    <div class="
+                        text-8xl
+                        font-bold
+                        text-blue-600
+                    ">
+
+                        {{ current.numero }}
+
+                    </div>
+
+                </div>
+
+                <div class="
+                    bg-green-100
+                    text-green-600
+                    px-8
+                    py-4
+                    rounded-2xl
+                    text-2xl
+                    font-bold
+                ">
+
+                    Veuillez vous présenter
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="
+                text-4xl
+                text-gray-400
+            ">
+
+                Aucun ticket appelé
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- WAITING -->
+
+        <div class="
+            bg-white
+            rounded-3xl
+            p-8
+            shadow-xl
+        ">
+
+            <h2 class="
+                text-3xl
+                font-bold
+                mb-6
+            ">
+
+                Prochains tickets
+
+            </h2>
+
+            <div class="
+                space-y-4
+            ">
+
+                {% for ticket in waiting %}
+
+                <div class="
+                    bg-gray-100
+                    rounded-2xl
+                    p-5
+                    flex
+                    justify-between
+                    items-center
+                ">
+
+                    <div>
+
+                        <div class="
+                            text-3xl
+                            font-bold
+                        ">
+
+                            {{ ticket.numero }}
+
+                        </div>
+
+                        <div class="
+                            text-gray-500
+                        ">
+
+                            Position :
+                            {{ ticket.position }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="
+                        bg-blue-100
+                        text-blue-600
+                        px-4
+                        py-2
+                        rounded-xl
+                        font-bold
+                    ">
+
+                        En attente
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Votre Ticket</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<script>
+
+    const numero =
+        "{{ numero }}"
+
+    async function updateTicket()
+    {
+
+        const response =
+            await fetch(
+                `/ticket_status/${numero}`
+            )
+
+        const data =
+            await response.json()
+
+        // ---------------------
+        // UPDATE POSITION
+        // ---------------------
+
+        document.getElementById(
+            "position"
+        ).innerText =
+            data.position
+
+        // ---------------------
+        // NOTIFICATION
+        // ---------------------
+
+        const notif =
+            document.getElementById(
+                "notification"
+            )
+
+        // ---------------------
+        // APPROCHE
+        // ---------------------
+
+        if (
+            data.position <= 2
+            &&
+            data.statut == "En attente"
+        )
+        {
+
+            notif.classList.remove(
+                "hidden"
+            )
+
+            notif.className =
+                `
+                mt-6
+                bg-orange-100
+                text-orange-700
+                p-5
+                rounded-2xl
+                text-xl
+                font-bold
+                `
+
+            notif.innerText =
+                "Votre tour est estimé dans "
+                + data.temps_restant
+        }
+
+        // ---------------------
+        // TOUR ACTUEL
+        // ---------------------
+
+        if (
+            data.statut == "En cours"
+        )
+        {
+
+            notif.classList.remove(
+                "hidden"
+            )
+
+            notif.className =
+                `
+                mt-6
+                bg-green-100
+                text-green-700
+                p-5
+                rounded-2xl
+                text-xl
+                font-bold
+                animate-pulse
+                `
+
+            notif.innerText =
+                "C'est votre tour maintenant."
+        }
+
+        // ---------------------
+        // TERMINÉ
+        // ---------------------
+
+        if (
+            data.statut == "Terminé"
+        )
+        {
+
+            notif.classList.remove(
+                "hidden"
+            )
+
+            notif.className =
+                `
+                mt-6
+                bg-gray-200
+                text-gray-700
+                p-5
+                rounded-2xl
+                text-xl
+                font-bold
+                `
+
+            notif.innerText =
+                "Votre ticket est terminé."
+        }
+
+    }
+
+    // -------------------------
+    // AUTO REFRESH
+    // -------------------------
+
+    setInterval(
+        updateTicket,
+        5000
+    )
+
+</script>
+
+<body class="
+    bg-gray-100
+    flex
+    items-center
+    justify-center
+    min-h-screen
+">
+
+    <div class="
+        bg-white
+        p-8
+        rounded-3xl
+        shadow-xl
+        w-11/12
+        max-w-md
+        text-center
+    ">
+
+        <h1 class="
+            text-3xl
+            font-bold
+            text-blue-600
+            mb-6
+        ">
+
+            Ticket Créé
+
+        </h1>
+
+        <div class="space-y-4">
+
+            <div>
+
+                <p class="text-gray-500">
+                    Numéro Ticket
+                </p>
+
+                <h2 class="
+                    text-5xl
+                    font-bold
+                    text-blue-600
+                ">
+                    {{ numero }}
+                </h2>
+
+            </div>
+
+            <div>
+
+                <p class="text-gray-500">
+                    Position
+                </p>
+
+                <h3
+                    id="position"
+                    class="
+                        text-3xl
+                        font-bold
+                    "
+                >
+                    {{ position }}
+                </h3>
+                
+
+            </div>
+
+            <div>
+
+                <p class="text-gray-500">
+                    Temps estimé
+                </p>
+
+                <h3 class="
+                    text-3xl
+                    font-bold
+                    text-green-500
+                ">
+                    {{ temps }} min
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="
+            mt-8
+            bg-orange-100
+            text-orange-700
+            p-4
+            rounded-2xl
+        ">
+
+            Une notification vous sera envoyée
+            lorsque votre tour approche.
+
+        </div>
+
+        <div
+            id="notification"
+            class="
+                mt-6
+                hidden
+                p-5
+                rounded-2xl
+                text-xl
+                font-bold
+            "
+        >
+        </div>
+
+    </div>
+
+</body>
+</html>

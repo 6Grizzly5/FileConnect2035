@@ -1,0 +1,220 @@
+/* ============================================
+   FILECONNECT 2035 - STYLE GLOBAL
+   ============================================ */
+
+QWidget {
+    background-color: #F0F4FA;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1F2933;
+    font-size: 14px;
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+
+#sidebar {
+    background: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 #1e40af,
+        stop:1 #2563eb
+    );
+    border-radius: 22px;
+    padding: 8px;
+}
+
+#appTitle {
+    color: white;
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* ============================================
+   PAGE TITLES
+   ============================================ */
+
+#pageTitle {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0f172a;
+    padding: 4px 0;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+QTableWidget {
+    background-color: white;
+    border-radius: 18px;
+    padding: 10px;
+    border: none;
+    gridline-color: transparent;
+    font-size: 14px;
+}
+
+QHeaderView::section {
+    background-color: #f1f5f9;
+    border: none;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #475569;
+}
+
+QTableWidget::item {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+}
+
+QTableWidget::item:selected {
+    background-color: #eff6ff;
+    color: #1e40af;
+    border-radius: 8px;
+}
+
+QTableWidget::item:alternate {
+    background-color: #fafafa;
+}
+
+/* ============================================
+   SCROLL BARS
+   ============================================ */
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #cbd5e1;
+    border-radius: 4px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #94a3b8;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar:horizontal {
+    background: transparent;
+    height: 8px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+/* ============================================
+   MESSAGE BOXES
+   ============================================ */
+
+QMessageBox {
+    background-color: white;
+}
+
+QMessageBox QPushButton {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: bold;
+    min-width: 80px;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: #1d4ed8;
+}
+
+/* ============================================
+   TOOLTIP
+   ============================================ */
+
+QToolTip {
+    background-color: #1e293b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+/* ============================================
+   NEXT TICKET BUTTON
+   ============================================ */
+
+#nextBtn {
+    background-color: #10B981;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#nextBtn:hover {
+    background-color: #059669;
+}
+
+/* ============================================
+   MISC LABELS
+   ============================================ */
+
+#companyName {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1d3557;
+}
+
+#beautifulDate {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2b2d42;
+    padding: 12px;
+    background: white;
+    border-radius: 12px;
+}
+
+#topbar {
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+}
+
+#appName {
+    font-size: 26px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+#adminLabel {
+    color: white;
+    font-size: 14px;
+    padding: 16px;
+}
+
+#refreshBtn {
+    background-color: white;
+    border-radius: 14px;
+    padding: 10px;
+}
+
+#statsContainer {
+    background: transparent;
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Queue 2035</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- HEADER -->
+
+    <div class="bg-blue-600 p-6 rounded-b-3xl shadow-lg">
+
+        <h1 class="text-3xl font-bold text-white">
+            Smart Queue 2035
+        </h1>
+
+        <p class="text-blue-100 mt-2">
+            Gestion intelligente des files
+        </p>
+
+    </div>
+
+    <!-- CONTENU -->
+
+    <div class="p-6">
+
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+
+            Choisissez un service
+
+        </h2>
+
+        <div class="space-y-4">
+
+            {% for service in services %}
+
+            <button
+                onclick="choisirService({{ service.id }})"
+                class="
+                    w-full
+                    bg-white
+                    p-5
+                    rounded-2xl
+                    shadow
+                    text-left
+                    hover:bg-blue-600
+                    hover:text-white
+                    transition
+                "
+            >
+
+                <div class="text-xl font-semibold">
+
+                    {{ service.nom }}
+
+                </div>
+
+            </button>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPT -->
+
+    <script>
+
+        async function choisirService(serviceId)
+        {
+
+            let nom = prompt(
+                "Entrez votre nom"
+            )
+
+            if (!nom)
+            {
+                return
+            }
+
+            const response = await fetch(
+                '/create_ticket',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                        'application/json'
+                    },
+
+                    body: JSON.stringify({
+
+                        client: nom,
+
+                        service_id: serviceId
+
+                    })
+                }
+            )
+
+            const data = await response.json()
+
+            window.location.href =
+                `/ticket_page`
+                +
+                `?numero=${data.numero}`
+                +
+                `&position=${data.position}`
+                +
+                `&temps=${data.temps_estime}`
+        }
+
+    </script>
+
+</body>
+</html>

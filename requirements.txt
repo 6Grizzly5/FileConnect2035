@@ -1,0 +1,21 @@
+1 - Dépendance installé : 
+Flask==3.1.0
+Flask-SQLAlchemy==3.1.1
+psycopg2==2.9.10
+requests==2.32.3
+PyQt5==5.15.11
+qtawesome==1.4.0
+qrcode==8.2
+Pillow==11.3.0
+
+2 - Utilité : 
+| Package            | Utilité              |
+| ------------------ | -------------------- |
+| `Flask`            | Backend API          |
+| `Flask-SQLAlchemy` | ORM BDD              |
+| `psycopg2`         | Connexion PostgreSQL |
+| `requests`         | Communication API    |
+| `PyQt5`            | Interface desktop    |
+| `qtawesome`        | Icônes modernes      |
+| `qrcode`           | Génération QR        |
+| `Pillow`           | Gestion images QR    |
