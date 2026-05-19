@@ -132,10 +132,11 @@ class Sidebar(QFrame):
         self.btn_dashboard = self._btn('fa5s.chart-line', "Dashboard")
         self.btn_tickets   = self._btn('fa5s.ticket-alt', "Tickets")
         self.btn_services  = self._btn('fa5s.cogs',       "Services")
+        self.btn_guichets   = self._btn('fa5s.desktop',    "Guichets")
         self.btn_stats     = self._btn('fa5s.chart-pie',  "Statistiques")
 
         for b in [self.btn_home, self.btn_dashboard,
-                  self.btn_tickets, self.btn_services, self.btn_stats]:
+                  self.btn_tickets, self.btn_services, self.btn_guichets, self.btn_stats]:
             layout.addWidget(b)
 
         layout.addSpacing(10)

@@ -20,6 +20,7 @@ from dashboard.tickets_page import TicketsPage
 from dashboard.stats_page import StatsPage
 from dashboard.sevices_page import ServicesPage
 from dashboard.settings_page import SettingsPage
+from dashboard.guichets_page import GuichetsPage
 
 
 class Dashboard(QWidget):
@@ -55,13 +56,14 @@ class Dashboard(QWidget):
         self.tickets_page   = TicketsPage()
         self.stats_page     = StatsPage()
         self.services_page  = ServicesPage()
+        self.guichets_page  = GuichetsPage()
         self.settings_page  = SettingsPage()
 
         self.pages = QStackedWidget()
         for p in [
             self.home_page, self.dashboard_page,
             self.tickets_page, self.stats_page,
-            self.services_page, self.settings_page
+            self.services_page, self.guichets_page, self.settings_page
         ]:
             self.pages.addWidget(p)
 
@@ -89,13 +91,14 @@ class Dashboard(QWidget):
             self.sidebar.btn_tickets,
             self.sidebar.btn_stats,
             self.sidebar.btn_services,
+            self.sidebar.btn_guichets,
             self.sidebar.btn_settings,
         ]
 
         nav_pairs = zip(self._btns, [
             self.home_page, self.dashboard_page,
             self.tickets_page, self.stats_page,
-            self.services_page, self.settings_page
+            self.services_page, self.guichets_page, self.settings_page
         ])
 
         for i, (btn, page) in enumerate(nav_pairs):
@@ -170,6 +173,7 @@ class Dashboard(QWidget):
             self.dashboard_page,
             self.tickets_page,
             self.stats_page,
+            self.guichets_page,
             self.services_page,
         ]
 

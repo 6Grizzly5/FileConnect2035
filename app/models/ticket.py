@@ -50,3 +50,8 @@ class Ticket(db.Model):
         backref="tickets_list",
         lazy=True
     )
+    
+    id_guichet = db.Column(
+        db.Integer,
+        db.ForeignKey('guichet.id')
+    )

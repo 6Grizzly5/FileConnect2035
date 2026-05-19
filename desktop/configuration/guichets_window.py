@@ -1,20 +1,18 @@
 from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
-    QLineEdit,
     QPushButton,
     QVBoxLayout,
-    QMessageBox
+    QMessageBox,
+    QSpinBox
 )
 
 from PyQt5.QtCore import Qt
 
-from configuration.guichets_window import GuichetsWindow
-
 import requests
 
 
-class ServicesWindow(QWidget):
+class GuichetsWindow(QWidget):
 
     def __init__(self, id_agence):
 
@@ -23,10 +21,10 @@ class ServicesWindow(QWidget):
         self.id_agence = id_agence
 
         self.setWindowTitle(
-            "Ajout Services"
+            "Configuration des Guichets"
         )
 
-        self.resize(500, 500)
+        self.resize(500, 400)
 
         # =========================
         # STYLE
@@ -45,16 +43,16 @@ class ServicesWindow(QWidget):
                 color: #cbd5e1;
             }
 
-            QLineEdit {
+            QSpinBox {
                 background-color: #1e293b;
                 border: 2px solid #334155;
                 border-radius: 10px;
                 padding: 12px;
                 color: white;
-                font-size: 14px;
+                font-size: 18px;
             }
 
-            QLineEdit:focus {
+            QSpinBox:focus {
                 border: 2px solid #38bdf8;
             }
 
@@ -87,14 +85,14 @@ class ServicesWindow(QWidget):
             40
         )
 
-        self.layout.setSpacing(10)
+        self.layout.setSpacing(15)
 
         # =========================
         # TITRE
         # =========================
 
         self.title = QLabel(
-            "Ajout des Services"
+            "Configuration des Guichets"
         )
 
         self.title.setStyleSheet("""
@@ -112,154 +110,92 @@ class ServicesWindow(QWidget):
         )
 
         # =========================
-        # NOM SERVICE
+        # LABEL
         # =========================
 
-        self.label_service = QLabel(
-            "Nom Service"
-        )
-
-        self.input_service = QLineEdit()
-
-        self.input_service.setPlaceholderText(
-            "Ex: Dépôt"
+        self.label = QLabel(
+            "Nombre de guichets"
         )
 
         self.layout.addWidget(
-            self.label_service
+            self.label
+        )
+
+        # =========================
+        # SPINBOX
+        # =========================
+
+        self.spin = QSpinBox()
+
+        self.spin.setMinimum(1)
+        self.spin.setMaximum(50)
+        self.spin.setValue(2)
+
+        self.layout.addWidget(
+            self.spin
+        )
+
+        # =========================
+        # BOUTON
+        # =========================
+
+        self.btn_create = QPushButton(
+            "Créer les Guichets"
+        )
+
+        self.btn_create.clicked.connect(
+            self.create_guichets
         )
 
         self.layout.addWidget(
-            self.input_service
-        )
-
-        # =========================
-        # DUREE
-        # =========================
-
-        self.label_duree = QLabel(
-            "Durée moyenne"
-        )
-
-        self.input_duree = QLineEdit()
-
-        self.input_duree.setPlaceholderText(
-            "Ex: 10"
-        )
-
-        self.layout.addWidget(
-            self.label_duree
-        )
-
-        self.layout.addWidget(
-            self.input_duree
-        )
-
-        # =========================
-        # BTN AJOUT
-        # =========================
-
-        self.btn_add = QPushButton(
-            "Ajouter Service"
-        )
-
-        self.btn_add.clicked.connect(
-            self.add_service
-        )
-
-        self.layout.addWidget(
-            self.btn_add
-        )
-
-        # =========================
-        # BTN TERMINER
-        # =========================
-
-        self.btn_finish = QPushButton(
-            "Terminer"
-        )
-
-        self.btn_finish.setStyleSheet("""
-
-            QPushButton {
-                background-color: #16a34a;
-                border: none;
-                border-radius: 12px;
-                padding: 14px;
-                color: white;
-                font-weight: bold;
-                margin-top: 10px;
-            }
-
-            QPushButton:hover {
-                background-color: #22c55e;
-            }
-
-        """)
-
-        self.btn_finish.clicked.connect(
-            self.open_guichets_window
-        )
-
-        self.layout.addWidget(
-            self.btn_finish
+            self.btn_create
         )
 
         self.setLayout(
             self.layout
         )
-        
-    def open_guichets_window(self):
 
-        self.guichets_window = GuichetsWindow(
-            self.id_agence
-        )
-
-        self.guichets_window.show()
-
-        self.close()
     # ==================================
-    # AJOUT SERVICE
+    # CREATE GUICHETS
     # ==================================
 
-    def add_service(self):
+    def create_guichets(self):
 
         try:
 
-            data = {
-
-                'nom': self.input_service.text(),
-
-                'duree': int(
-                    self.input_duree.text()
-                ),
-
-                'id_agence': self.id_agence
-            }
+            total = self.spin.value()
 
             response = requests.post(
-                'http://127.0.0.1:5000/create_service',
-                json=data
+                'http://127.0.0.1:5000/create_guichet',
+                json={
+                    'nombre': total,
+                    'id_agence': self.id_agence
+                }
             )
 
-            if response.ok:
+            if response.status_code == 201:
 
                 QMessageBox.information(
                     self,
                     "Succès",
-                    "Service ajouté"
+                    "Guichets créés"
                 )
 
-                self.input_service.clear()
+                # 🔥 OUVERTURE DASHBOARD
+                from dashboard.dashboard import Dashboard
 
-                self.input_duree.clear()
+                self.dashboard = Dashboard()
+
+                self.dashboard.show()
+
+                self.close()
 
             else:
 
                 QMessageBox.warning(
                     self,
                     "Erreur",
-                    "Impossible d'ajouter"
+                    response.text
                 )
 
         except Exception as e:

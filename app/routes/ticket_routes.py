@@ -7,6 +7,7 @@ from app import db
 
 from app.models.ticket import Ticket
 from app.models.service import Service
+from app.models.guichet import Guichet
 from app.services.calcul_file import (
     calculer_position,
     calculer_temps_estime,
@@ -69,43 +70,43 @@ def create_ticket():
     })
 
 
-# =========================
-# NEXT TICKET
-# =========================
+# # =========================
+# # NEXT TICKET
+# # =========================
 
-@ticket_bp.route(
-    '/next_ticket',
-    methods=['POST']
-)
-def next_ticket():
+# @ticket_bp.route(
+#     '/next_ticket',
+#     methods=['POST']
+# )
+# def next_ticket():
 
-    # Terminer le ticket en cours
-    current = Ticket.query.filter_by(
-        statut="En cours"
-    ).first()
+#     # Terminer le ticket en cours
+#     current = Ticket.query.filter_by(
+#         statut="En cours"
+#     ).first()
 
-    if current:
-        current.statut = "Terminé"
-        current.position = 0
+#     if current:
+#         current.statut = "Terminé"
+#         current.position = 0
 
-    # Appeler le prochain (ordre SPT = position 1)
-    prochain = (
-        Ticket.query
-        .filter_by(statut="En attente")
-        .order_by(Ticket.position.asc())
-        .first()
-    )
+#     # Appeler le prochain (ordre SPT = position 1)
+#     prochain = (
+#         Ticket.query
+#         .filter_by(statut="En attente")
+#         .order_by(Ticket.position.asc())
+#         .first()
+#     )
 
-    if prochain:
-        prochain.statut = "En cours"
-        prochain.position = 0
+#     if prochain:
+#         prochain.statut = "En cours"
+#         prochain.position = 0
 
-    # Réordonner le reste de la file
-    reordonner_file()
+#     # Réordonner le reste de la file
+#     reordonner_file()
 
-    db.session.commit()
+#     db.session.commit()
 
-    return jsonify({'message': 'Ticket suivant appelé'})
+#     return jsonify({'message': 'Ticket suivant appelé'})
 
 
 # =========================
@@ -187,3 +188,91 @@ def ticket_status(numero):
         'temps_restant': f"{temps_restant} min",
         'service': service.nom if service else '—'
     })
+
+# ─────────────────────────────
+# NEXT TICKET + GUICHET
+# ─────────────────────────────
+
+@ticket_bp.route(
+    '/next_ticket',
+    methods=['POST']
+)
+def next_ticket():
+
+    try:
+
+        data = request.get_json()
+
+        id_guichet = data.get(
+            'id_guichet'
+        )
+
+        guichet = Guichet.query.get(
+            id_guichet
+        )
+
+        if not guichet:
+
+            return jsonify({
+                'error': 'Guichet introuvable'
+            }), 404
+
+        # terminer ancien ticket du guichet
+        ancien = (
+            Ticket.query
+            .filter_by(
+                id_guichet=id_guichet,
+                statut='En cours'
+            )
+            .first()
+        )
+
+        if ancien:
+
+            ancien.statut = 'Terminé'
+
+        # prendre prochain ticket
+        ticket = (
+            Ticket.query
+            .filter_by(statut='En attente')
+            .order_by(Ticket.position.asc())
+            .first()
+        )
+
+        if not ticket:
+
+            return jsonify({
+                'error': 'Aucun ticket'
+            }), 404
+
+        ticket.statut = 'En cours'
+
+        ticket.id_guichet = guichet.id
+
+        ticket.position = 0
+
+        # recalcul file
+        reordonner_file()
+
+        db.session.commit()
+
+        return jsonify({
+
+            'ticket': ticket.numero,
+
+            'guichet': guichet.numero,
+
+            'message': (
+                f'{ticket.numero} → '
+                f'Guichet {guichet.numero}'
+            )
+
+        })
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        return jsonify({
+            'error': str(e)
+        }), 500

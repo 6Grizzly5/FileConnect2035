@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Guichet {{ guichet.numero }}
+    </title>
+
+    <style>
+
+        * {
+    
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+    
+            font-family: Arial;
+        }
+    
+        body {
+    
+            background: #f1f5f9;
+    
+            min-height: 100vh;
+    
+            display: flex;
+    
+            justify-content: center;
+    
+            align-items: center;
+    
+            padding: 30px;
+        }
+    
+        .container {
+    
+            width: 100%;
+            max-width: 520px;
+    
+            background: white;
+    
+            border-radius: 24px;
+    
+            padding: 35px;
+    
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.08);
+        }
+    
+        .top {
+    
+            display: flex;
+    
+            align-items: center;
+    
+            gap: 15px;
+    
+            margin-bottom: 30px;
+        }
+    
+        .logo {
+    
+            width: 60px;
+            height: 60px;
+    
+            border-radius: 18px;
+    
+            background: #2563eb;
+    
+            display: flex;
+    
+            align-items: center;
+    
+            justify-content: center;
+    
+            color: white;
+    
+            font-size: 28px;
+    
+            font-weight: bold;
+        }
+    
+        .agency h1 {
+    
+            color: #0f172a;
+    
+            font-size: 24px;
+    
+            margin-bottom: 4px;
+        }
+    
+        .agency p {
+    
+            color: #64748b;
+    
+            font-size: 14px;
+        }
+    
+        .guichet-box {
+    
+            background: #eff6ff;
+    
+            border-radius: 18px;
+    
+            padding: 25px;
+    
+            text-align: center;
+    
+            margin-bottom: 25px;
+        }
+    
+        .guichet-box h2 {
+    
+            color: #2563eb;
+    
+            font-size: 42px;
+    
+            margin-bottom: 8px;
+        }
+    
+        .status {
+    
+            display: inline-block;
+    
+            padding: 8px 16px;
+    
+            border-radius: 999px;
+    
+            background: #dbeafe;
+    
+            color: #2563eb;
+    
+            font-size: 14px;
+    
+            font-weight: bold;
+    
+            margin-top: 10px;
+        }
+    
+        .ticket {
+    
+            background: #f8fafc;
+    
+            border: 2px solid #e2e8f0;
+    
+            border-radius: 18px;
+    
+            padding: 25px;
+    
+            text-align: center;
+    
+            margin-bottom: 25px;
+        }
+    
+        .ticket p {
+    
+            color: #64748b;
+    
+            margin-bottom: 10px;
+        }
+    
+        .ticket h3 {
+    
+            font-size: 52px;
+    
+            color: #0f172a;
+        }
+    
+        .actions {
+    
+            display: flex;
+    
+            flex-direction: column;
+    
+            gap: 14px;
+        }
+    
+        button {
+    
+            border: none;
+    
+            border-radius: 14px;
+    
+            padding: 16px;
+    
+            font-size: 15px;
+    
+            font-weight: bold;
+    
+            cursor: pointer;
+    
+            transition: 0.2s;
+        }
+    
+        button:hover {
+    
+            transform: translateY(-2px);
+        }
+    
+        .btn-primary {
+    
+            background: #2563eb;
+    
+            color: white;
+        }
+    
+        .btn-secondary {
+    
+            background: #e2e8f0;
+    
+            color: #0f172a;
+        }
+    
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="top">
+    
+            <div class="logo">
+                F
+            </div>
+    
+            <div class="agency">
+    
+                <h1>
+                    FileConnect
+                </h1>
+    
+                <p>
+                    {{ guichet.agence.nom }}
+                </p>
+    
+            </div>
+    
+        </div>
+    
+        <div class="guichet-box">
+    
+            <h2>
+                Guichet {{ guichet.numero }}
+            </h2>
+    
+            <div
+                class="status"
+                id="status"
+            >
+                {{ guichet.statut }}
+            </div>
+    
+        </div>
+    
+        <div class="ticket">
+    
+            <p>
+                Ticket actuel
+            </p>
+    
+            <h3 id="ticket">
+                ---
+            </h3>
+    
+        </div>
+    
+        <div class="actions">
+    
+            <button
+                class="btn-primary"
+                onclick="nextTicket()"
+            >
+                Prochain ticket
+            </button>
+    
+            <button
+                class="btn-secondary"
+                onclick="changeStatus('pause')"
+            >
+                Pause
+            </button>
+    
+            <button
+                class="btn-secondary"
+                onclick="changeStatus('disponible')"
+            >
+                Disponible
+            </button>
+    
+            <button
+                class="btn-secondary"
+                onclick="changeStatus('occupé')"
+            >
+                Occupé
+            </button>
+    
+        </div>
+    
+    </div>
+
+    <script>
+
+        const idGuichet = {{ guichet.id }}
+
+        async function changeStatus(statut) {
+
+            await fetch(
+                `/guichet/${idGuichet}/status`,
+                {
+
+                    method: 'PUT',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        statut: statut
+                    })
+
+                }
+            )
+
+            document.getElementById(
+                'status'
+            ).innerText = statut
+        }
+
+        async function nextTicket() {
+
+            const response = await fetch(
+                '/next_ticket',
+                {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        id_guichet: idGuichet
+                    })
+
+                }
+            )
+
+            const data = await response.json()
+
+            if(data.ticket){
+
+                document.getElementById(
+                    'ticket'
+                ).innerText = data.ticket
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>
