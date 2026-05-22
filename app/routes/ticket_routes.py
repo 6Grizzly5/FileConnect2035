@@ -144,6 +144,10 @@ def admin_tickets():
             'position': ticket.position or 0,
             'temps_estime': ticket.temps_estime or 0,
             'statut': ticket.statut or 'En attente',
+            'guichet': (
+                f"Guichet {ticket.guichet.numero}"
+                if ticket.guichet else '—'
+            ),
             'heure_creation': (
                 ticket.heure_creation.strftime('%H:%M')
                 if ticket.heure_creation else '—'

@@ -109,9 +109,9 @@ class TicketsPage(QWidget):
         # ─────────────────────────────
 
         self.table = QTableWidget()
-        self.table.setColumnCount(7)
+        self.table.setColumnCount(8)
         self.table.setHorizontalHeaderLabels([
-            "Numéro", "Client", "Service",
+            "Numéro", "Client", "Service", "Guichet",
             "Durée svc", "Position", "Attente estimée", "Statut"
         ])
 
@@ -120,6 +120,7 @@ class TicketsPage(QWidget):
         hh.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         hh.setSectionResizeMode(3, QHeaderView.ResizeToContents)
         hh.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        hh.setSectionResizeMode(5, QHeaderView.ResizeToContents)
 
         self.table.verticalHeader().setVisible(False)
         self.table.setShowGrid(False)
@@ -260,12 +261,29 @@ class TicketsPage(QWidget):
             self.table.setItem(row, 1, ci)
 
             # — Service —
-            self.table.setItem(row, 2, QTableWidgetItem(t['service']))
+            self.table.setItem(
+                row,
+                2,
+                QTableWidgetItem(t['service'])
+            )
+
+            # — Guichet —
+            g = QTableWidgetItem(
+                t.get('guichet', '—')
+            )
+
+            g.setTextAlignment(Qt.AlignCenter)
+
+            g.setFont(
+                QFont("Segoe UI", 11, QFont.Bold)
+            )
+
+            self.table.setItem(row, 3, g)
 
             # — Durée service —
             d = QTableWidgetItem(f"⏱  {t.get('duree_service', 0)} min")
             d.setTextAlignment(Qt.AlignCenter)
-            self.table.setItem(row, 3, d)
+            self.table.setItem(row, 4, d)
 
             # — Position —
             pos = t.get('position', 0)
@@ -275,7 +293,7 @@ class TicketsPage(QWidget):
                 pos_txt = f"#{pos}"
             pi = QTableWidgetItem(pos_txt)
             pi.setTextAlignment(Qt.AlignCenter)
-            self.table.setItem(row, 4, pi)
+            self.table.setItem(row, 5, pi)
 
             # — Temps estimé —
             temps = t.get('temps_estime', 0)
@@ -287,7 +305,7 @@ class TicketsPage(QWidget):
                 t_txt = f"~{temps} min"
             ti = QTableWidgetItem(t_txt)
             ti.setTextAlignment(Qt.AlignCenter)
-            self.table.setItem(row, 5, ti)
+            self.table.setItem(row, 6, ti)
 
             # — Statut badge coloré —
             si = QTableWidgetItem(statut)
@@ -295,7 +313,7 @@ class TicketsPage(QWidget):
             si.setForeground(QColor(color))
             si.setBackground(QColor(bg))
             si.setFont(QFont("Segoe UI", 12, QFont.Bold))
-            self.table.setItem(row, 6, si)
+            self.table.setItem(row, 7, si)
 
     # ─────────────────────────────
     # NEXT TICKET

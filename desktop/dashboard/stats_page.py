@@ -140,6 +140,65 @@ class StatsPage(QWidget):
         charts_layout.addWidget(self.bar_frame)
 
         self.layout.addLayout(charts_layout)
+        
+        # =========================
+        # GUICHET PERFORMANCE
+        # =========================
+
+        self.guichet_frame = QFrame()
+
+        self.guichet_frame.setStyleSheet("""
+        QFrame {
+            background: white;
+            border-radius: 20px;
+        }
+        """)
+
+        guichet_layout = QVBoxLayout()
+
+        guichet_layout.setContentsMargins(
+            16, 16, 16, 16
+        )
+
+        guichet_label = QLabel(
+            "Performance des Guichets"
+        )
+
+        guichet_label.setStyleSheet(
+            """
+            font-size:16px;
+            font-weight:bold;
+            color:#0f172a;
+            """
+        )
+
+        guichet_layout.addWidget(
+            guichet_label
+        )
+
+        self.guichet_figure = Figure(
+            figsize=(8, 3)
+        )
+
+        self.guichet_figure.patch.set_facecolor(
+            'none'
+        )
+
+        self.guichet_canvas = FigureCanvasQTAgg(
+            self.guichet_figure
+        )
+
+        guichet_layout.addWidget(
+            self.guichet_canvas
+        )
+
+        self.guichet_frame.setLayout(
+            guichet_layout
+        )
+
+        self.layout.addWidget(
+            self.guichet_frame
+        )
 
         self.setLayout(self.layout)
 
@@ -224,6 +283,26 @@ class StatsPage(QWidget):
                 self._draw_bar(services)
         except Exception as e:
             print("Erreur services :", e)
+            
+        try:
+
+            resp3 = requests.get(
+                "http://127.0.0.1:5000/guichet_stats",
+                timeout=3
+            )
+
+            if resp3.ok:
+
+                self._draw_guichet_stats(
+                    resp3.json()
+                )
+
+        except Exception as e:
+
+            print(
+                "Erreur guichets :",
+                e
+            )
 
     # ================================
     # DRAW PIE
@@ -337,6 +416,98 @@ class StatsPage(QWidget):
 
         self.bar_figure.tight_layout()
         self.bar_canvas.draw()
+    
+    # ================================
+    # DRAW GUICHET STATS
+    # ================================
+
+    def _draw_guichet_stats(self, data):
+
+        self.guichet_figure.clear()
+
+        ax = self.guichet_figure.add_subplot(111)
+
+        if not data:
+
+            ax.text(
+                0.5,
+                0.5,
+                "Aucune donnée",
+                ha='center',
+                va='center',
+                fontsize=11,
+                color="#94a3b8"
+            )
+
+            ax.axis('off')
+
+            self.guichet_canvas.draw()
+
+            return
+
+        noms = [
+            g['guichet']
+            for g in data
+        ]
+
+        totals = [
+            g['tickets']
+            for g in data
+        ]
+
+        bars = ax.barh(
+
+            noms,
+
+            totals,
+
+            color='#2563eb',
+
+            height=0.55
+
+        )
+
+        ax.set_facecolor('#f8fafc')
+
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+
+        ax.spines['left'].set_color('#e2e8f0')
+        ax.spines['bottom'].set_color('#e2e8f0')
+
+        ax.tick_params(
+            colors='#64748b',
+            labelsize=9
+        )
+
+        ax.set_xlabel(
+            "Tickets traités",
+            fontsize=9,
+            color='#64748b'
+        )
+
+        for bar, val in zip(bars, totals):
+
+            ax.text(
+
+                val + 0.2,
+
+                bar.get_y() + bar.get_height()/2,
+
+                str(val),
+
+                va='center',
+
+                fontsize=9,
+
+                color='#0f172a',
+
+                fontweight='bold'
+            )
+
+        self.guichet_figure.tight_layout()
+
+        self.guichet_canvas.draw()
 
     # ──────────────────────────────────
     # REFRESH (appelé par timer global)

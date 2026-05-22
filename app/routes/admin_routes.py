@@ -40,3 +40,34 @@ def dashboard_stats():
         'finished_tickets': finished,
         'average_time': moyenne
     })
+    
+@admin_bp.route('/guichet_stats')
+def guichet_stats():
+
+    from app.models.guichet import Guichet
+    from app.models.ticket import Ticket
+
+    result = []
+
+    guichets = Guichet.query.all()
+
+    for g in guichets:
+
+        total = (
+            Ticket.query
+            .filter_by(
+                id_guichet=g.id,
+                statut='Terminé'
+            )
+            .count()
+        )
+
+        result.append({
+
+            'guichet': f'Guichet {g.numero}',
+
+            'tickets': total
+
+        })
+
+    return jsonify(result)

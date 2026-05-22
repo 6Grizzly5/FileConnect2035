@@ -3,6 +3,7 @@ from datetime import datetime
 from app.models.ticket import Ticket
 from app.models.guichet import Guichet
 
+import heapq
 
 def choisir_ticket_pour_guichet(id_guichet):
 
@@ -11,11 +12,9 @@ def choisir_ticket_pour_guichet(id_guichet):
     if not guichet:
         return None
 
-    # Guichet fermé/pause
     if guichet.statut != 'disponible':
         return None
 
-    # Tickets en attente
     tickets = (
         Ticket.query
         .filter_by(statut='En attente')
@@ -25,55 +24,64 @@ def choisir_ticket_pour_guichet(id_guichet):
     if not tickets:
         return None
 
+    heap = []
+
+    for ticket in tickets:
+
+        score = calcul_score(
+            ticket,
+            id_guichet
+        )
+
+        heapq.heappush(
+            heap,
+            (score, ticket.id)
+        )
+
+    meilleur_score, id_ticket = heapq.heappop(heap)
+
+    meilleur_ticket = Ticket.query.get(
+        id_ticket
+    )
+
+    return meilleur_ticket
+
     # ─────────────────────────────
     # SCORE INTELLIGENT
     # ─────────────────────────────
 
-    def calcul_score(ticket):
+def calcul_score(ticket, id_guichet):
 
-        # durée du service
-        duree = (
-            ticket.service.duree_moyenne
-            if ticket.service else 999
-        )
-
-        # attente réelle
-        maintenant = datetime.utcnow()
-
-        attente = (
-            maintenant - ticket.heure_creation
-        ).total_seconds() / 60
-
-        # priorité future possible
-        priorite = getattr(ticket, 'priorite', 0)
-
-        # charge du guichet
-        charge_guichet = (
-            Ticket.query
-            .filter_by(
-                id_guichet=id_guichet,
-                statut='En cours'
-            )
-            .count()
-        )
-
-        # ─────────────────────────
-        # FORMULE
-        # ─────────────────────────
-
-        score = (
-            duree
-            - (attente * 0.5)
-            - (priorite * 3)
-            + (charge_guichet * 2)
-        )
-
-        return score
-
-    # TRI FINAL
-    tickets = sorted(
-        tickets,
-        key=lambda t: calcul_score(t)
+    duree = (
+        ticket.service.duree_moyenne
+        if ticket.service else 999
     )
 
-    return tickets[0]
+    attente = (
+        datetime.utcnow()
+        - ticket.heure_creation
+    ).total_seconds() / 60
+
+    priorite = getattr(
+        ticket,
+        'priorite',
+        0
+    )
+
+    charge_guichet = (
+        Ticket.query
+        .filter_by(
+            id_guichet=id_guichet,
+            statut='En cours'
+        )
+        .count()
+    )
+
+    score = (
+        duree
+        - (attente * 0.5)
+        - (priorite * 3)
+        + (charge_guichet * 2)
+    )
+
+    return score
