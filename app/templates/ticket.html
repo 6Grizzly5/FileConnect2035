@@ -41,6 +41,16 @@
         ).innerText =
             data.position
 
+
+        // ---------------------
+        // UPDATE GUICHET
+        if(data.guichet){
+
+            document.getElementById(
+                "guichet"
+            ).innerText =
+                "Guichet " + data.guichet
+        }
         // ---------------------
         // NOTIFICATION
         // ---------------------
@@ -107,7 +117,8 @@
                 `
 
             notif.innerText =
-                "C'est votre tour maintenant."
+                "Veuillez vous présenter au guichet "
+                + data.guichet
         }
 
         // ---------------------
@@ -231,6 +242,24 @@
                     {{ temps }} min
                 </h3>
 
+            </div>
+            <div>
+
+                <p class="text-gray-500">
+                    Guichet
+                </p>
+            
+                <h3
+                    id="guichet"
+                    class="
+                        text-3xl
+                        font-bold
+                        text-blue-600
+                    "
+                >
+                    ---
+                </h3>
+            
             </div>
 
         </div>

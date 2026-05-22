@@ -5,6 +5,8 @@ from flask import render_template
 
 from app import db
 
+from datetime import datetime
+
 from app.models.ticket import Ticket
 from app.models.service import Service
 from app.models.guichet import Guichet
@@ -12,6 +14,9 @@ from app.services.calcul_file import (
     calculer_position,
     calculer_temps_estime,
     reordonner_file
+)
+from app.services.dispatch_algo import (
+    choisir_ticket_pour_guichet
 )
 
 ticket_bp = Blueprint(
@@ -181,12 +186,24 @@ def ticket_status(numero):
     temps_restant = (ticket.temps_estime or 0)
 
     return jsonify({
+
         'numero': ticket.numero,
+
         'client': ticket.client or 'Anonyme',
+
         'position': ticket.position or 0,
+
         'statut': ticket.statut,
+
         'temps_restant': f"{temps_restant} min",
-        'service': service.nom if service else '—'
+
+        'service': service.nom if service else '—',
+
+        'guichet': (
+            ticket.guichet.numero
+            if ticket.guichet else None
+        )
+
     })
 
 # ─────────────────────────────
@@ -217,7 +234,10 @@ def next_ticket():
                 'error': 'Guichet introuvable'
             }), 404
 
-        # terminer ancien ticket du guichet
+        # =========================
+        # TERMINER ANCIEN TICKET
+        # =========================
+
         ancien = (
             Ticket.query
             .filter_by(
@@ -231,28 +251,33 @@ def next_ticket():
 
             ancien.statut = 'Terminé'
 
-        # prendre prochain ticket
-        ticket = (
-            Ticket.query
-            .filter_by(statut='En attente')
-            .order_by(Ticket.position.asc())
-            .first()
+            ancien.heure_fin = datetime.utcnow()
+
+        # =========================
+        # CHERCHER NOUVEAU TICKET
+        # =========================
+
+        ticket = choisir_ticket_pour_guichet(
+            id_guichet
         )
 
         if not ticket:
 
+            db.session.commit()
+
             return jsonify({
-                'error': 'Aucun ticket'
-            }), 404
+                'message': 'Aucun ticket disponible'
+            })
+
+        # =========================
+        # ATTRIBUTION
+        # =========================
 
         ticket.statut = 'En cours'
 
         ticket.id_guichet = guichet.id
 
-        ticket.position = 0
-
-        # recalcul file
-        reordonner_file()
+        ticket.heure_debut = datetime.utcnow()
 
         db.session.commit()
 
@@ -262,9 +287,11 @@ def next_ticket():
 
             'guichet': guichet.numero,
 
-            'message': (
-                f'{ticket.numero} → '
-                f'Guichet {guichet.numero}'
+            'client': ticket.client,
+
+            'service': (
+                ticket.service.nom
+                if ticket.service else '---'
             )
 
         })

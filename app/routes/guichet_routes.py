@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, render_template
 from app import db
 
 from app.models.guichet import Guichet
+from app.models.ticket import Ticket
 from app.models.agence import Agence
 
 
@@ -267,3 +268,37 @@ def guichet_interface(
         'guichet.html',
         guichet=guichet
     )
+    
+# ─────────────────────────────
+# GET CURRENT TICKET
+# ─────────────────────────────
+
+@guichet_bp.route(
+    '/guichet/<int:id_guichet>/current_ticket',
+    methods=['GET']
+)
+def current_ticket(id_guichet):
+
+    ticket = Ticket.query.filter_by(
+        id_guichet=id_guichet,
+        statut='En cours'
+    ).first()
+
+    if not ticket:
+
+        return jsonify({
+            'ticket': None
+        })
+
+    return jsonify({
+
+        'ticket': ticket.numero,
+
+        'client': ticket.client,
+
+        'service': (
+            ticket.service.nom
+            if ticket.service else '---'
+        )
+
+    })

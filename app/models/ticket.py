@@ -55,3 +55,12 @@ class Ticket(db.Model):
         db.Integer,
         db.ForeignKey('guichet.id')
     )
+    heure_debut_service = db.Column(
+        db.DateTime
+    )
+    
+    guichet = db.relationship(
+        "Guichet",
+        backref="tickets",
+        lazy=True
+    )

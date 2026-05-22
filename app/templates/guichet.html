@@ -258,15 +258,38 @@
         </div>
     
         <div class="ticket">
-    
+
             <p>
                 Ticket actuel
             </p>
-    
+        
             <h3 id="ticket">
                 ---
             </h3>
-    
+        
+            <div
+                style="
+                    margin-top:20px;
+                    text-align:left;
+                "
+            >
+        
+                <p>
+                    <strong>Client :</strong>
+                    <span id="client">
+                        ---
+                    </span>
+                </p>
+        
+                <p style="margin-top:10px;">
+                    <strong>Service :</strong>
+                    <span id="service">
+                        ---
+                    </span>
+                </p>
+        
+            </div>
+        
         </div>
     
         <div class="actions">
@@ -357,10 +380,65 @@
                 document.getElementById(
                     'ticket'
                 ).innerText = data.ticket
+            
+                document.getElementById(
+                    'client'
+                ).innerText = data.client
+            }
+
+            document.getElementById(
+                'service'
+            ).innerText = data.service
+
+        }
+
+        async function loadCurrentTicket(){
+            const response = await fetch(
+                `/guichet/${idGuichet}/current_ticket`
+            )
+
+            const data = await response.json()
+
+            if(data.ticket)
+            {
+
+                document.getElementById(
+                    'ticket'
+                ).innerText = data.ticket
+
+                document.getElementById(
+                    'client'
+                ).innerText = data.client
+
+                document.getElementById(
+                    'service'
+                ).innerText = data.service
+
+            }
+            else
+            {
+
+                document.getElementById(
+                    'ticket'
+                ).innerText = "---"
+
+                document.getElementById(
+                    'client'
+                ).innerText = "---"
+
+                document.getElementById(
+                    'service'
+                ).innerText = "---"
 
             }
 
         }
+        setInterval(
+            loadCurrentTicket,
+            3000
+        )
+
+        loadCurrentTicket()
 
     </script>
 

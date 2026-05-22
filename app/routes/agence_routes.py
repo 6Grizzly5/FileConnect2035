@@ -17,20 +17,20 @@ agence_bp = Blueprint('agence_bp', __name__)
 # GENERER QR TEST
 # ─────────────────────────────
 
-@agence_bp.route('/generer_qr', methods=['GET'])
-def create_qr():
+# @agence_bp.route('/generer_qr', methods=['GET'])
+# def create_qr():
 
-    url = 'http://127.0.0.1:5000/'
+#     url = 'http://127.0.0.1:5000/'
 
-    chemin = generer_qr(
-        url,
-        'smartqueue_qr'
-    )
+#     chemin = generer_qr(
+#         url,
+#         'smartqueue_qr'
+#     )
 
-    return jsonify({
-        'message': 'QR Code généré',
-        'fichier': chemin
-    })
+#     return jsonify({
+#         'message': 'QR Code généré',
+#         'fichier': chemin
+#     })
 
 
 # ─────────────────────────────
