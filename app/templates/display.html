@@ -10,196 +10,271 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Display Smart Queue</title>
+    <title>
+        FileConnect Display
+    </title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- AUTO REFRESH -->
 
-    <meta http-equiv="refresh" content="5">
+    <meta
+        http-equiv="refresh"
+        content="5"
+    >
 
 </head>
 
 <body class="
     bg-[#F5F7FA]
     min-h-screen
-    p-10
+    flex
+    flex-col
+    text-gray-800
 ">
 
+    <!-- ========================= -->
     <!-- HEADER -->
+    <!-- ========================= -->
 
-    <div class="
+    <header class="
+        bg-blue-600
+        text-white
+        px-10
+        py-6
         flex
         justify-between
         items-center
-        mb-10
+        shadow-lg
     ">
+
+        <!-- LOGO -->
 
         <div>
 
             <h1 class="
                 text-5xl
                 font-bold
-                text-blue-600
             ">
 
-                Smart Queue 2035
+                FileConnect
 
             </h1>
 
             <p class="
-                text-gray-500
-                mt-2
+                text-blue-100
                 text-xl
+                mt-2
             ">
 
-                Affichage des tickets
+                Smart Queue Display
 
             </p>
 
         </div>
+
+        <!-- HEURE -->
+
+        <div class="
+            text-center
+        ">
+
+            <div
+                id="clock"
+                class="
+                    text-5xl
+                    font-bold
+                "
+            >
+                00:00
+            </div>
+
+            <div
+                id="date"
+                class="
+                    text-blue-100
+                    text-lg
+                    mt-2
+                "
+            >
+                ---
+            </div>
+
+        </div>
+
+        <!-- AGENCE -->
 
         <div class="
             text-right
         ">
 
             <div class="
-                text-gray-500
+                text-blue-100
                 text-xl
             ">
 
-                Ticket actuel
+                Agence
 
             </div>
-
-            <div class="
-                text-7xl
-                font-bold
-                text-green-500
-            ">
-
-                {% if current %}
-
-                    {{ current.numero }}
-
-                {% else %}
-
-                    ---
-
-                {% endif %}
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- MAIN -->
-
-    <div class="
-        grid
-        grid-cols-3
-        gap-8
-    ">
-
-        <!-- CURRENT -->
-
-        <div class="
-            col-span-2
-            bg-white
-            rounded-3xl
-            p-10
-            shadow-xl
-        ">
-
-            <h2 class="
-                text-3xl
-                font-bold
-                mb-8
-            ">
-
-                En cours
-
-            </h2>
-
-            {% if current %}
-
-            <div class="
-                flex
-                justify-between
-                items-center
-            ">
-
-                <div>
-
-                    <div class="
-                        text-gray-500
-                        text-2xl
-                    ">
-
-                        Ticket
-
-                    </div>
-
-                    <div class="
-                        text-8xl
-                        font-bold
-                        text-blue-600
-                    ">
-
-                        {{ current.numero }}
-
-                    </div>
-
-                </div>
-
-                <div class="
-                    bg-green-100
-                    text-green-600
-                    px-8
-                    py-4
-                    rounded-2xl
-                    text-2xl
-                    font-bold
-                ">
-
-                    Veuillez vous présenter
-
-                </div>
-
-            </div>
-
-            {% else %}
 
             <div class="
                 text-4xl
-                text-gray-400
+                font-bold
             ">
 
-                Aucun ticket appelé
+                {{ agence.nom }}
 
             </div>
 
-            {% endif %}
-
         </div>
 
-        <!-- WAITING -->
+    </header>
 
-        <div class="
+    <!-- ========================= -->
+    <!-- MAIN -->
+    <!-- ========================= -->
+
+    <main class="
+        flex-1
+        grid
+        grid-cols-4
+        gap-6
+        p-6
+    ">
+
+        <!-- ========================= -->
+        <!-- APPELS -->
+        <!-- ========================= -->
+
+        <section class="
+            col-span-3
             bg-white
             rounded-3xl
             p-8
             shadow-xl
+            relative
+            overflow-hidden
+        ">
+
+            <h2 class="
+                text-4xl
+                font-bold
+                text-blue-600
+                mb-8
+            ">
+
+                Tickets appelés
+
+            </h2>
+
+            <div class="
+                space-y-6
+            ">
+
+                {% for appel in appels %}
+
+                <div class="
+                    bg-blue-50
+                    border-2
+                    border-blue-200
+                    rounded-3xl
+                    p-8
+                    flex
+                    justify-between
+                    items-center
+                ">
+
+                    <!-- GUICHET -->
+
+                    <div>
+
+                        <div class="
+                            text-gray-500
+                            text-2xl
+                        ">
+
+                            Guichet
+
+                        </div>
+
+                        <div class="
+                            text-6xl
+                            font-bold
+                            text-green-500
+                        ">
+
+                            G{{ appel.guichet }}
+
+                        </div>
+
+                    </div>
+
+                    <!-- FLECHE -->
+
+                    <div class="
+                        text-7xl
+                        text-blue-500
+                        animate-pulse
+                    ">
+
+                        →
+
+                    </div>
+
+                    <!-- TICKET -->
+
+                    <div class="
+                        text-right
+                    ">
+
+                        <div class="
+                            text-gray-500
+                            text-2xl
+                        ">
+
+                            Ticket
+
+                        </div>
+
+                        <div class="
+                            text-7xl
+                            font-bold
+                            text-blue-600
+                        ">
+
+                            {{ appel.ticket }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <!-- ========================= -->
+        <!-- RECENTS -->
+        <!-- ========================= -->
+
+        <aside class="
+            bg-white
+            rounded-3xl
+            p-6
+            shadow-xl
         ">
 
             <h2 class="
                 text-3xl
                 font-bold
+                text-purple-600
                 mb-6
             ">
 
-                Prochains tickets
+                Tickets récents
 
             </h2>
 
@@ -207,7 +282,7 @@
                 space-y-4
             ">
 
-                {% for ticket in waiting %}
+                {% for appel in appels[:7] %}
 
                 <div class="
                     bg-gray-100
@@ -218,38 +293,27 @@
                     items-center
                 ">
 
-                    <div>
+                    <div class="
+                        text-3xl
+                        font-bold
+                        text-blue-600
+                    ">
 
-                        <div class="
-                            text-3xl
-                            font-bold
-                        ">
-
-                            {{ ticket.numero }}
-
-                        </div>
-
-                        <div class="
-                            text-gray-500
-                        ">
-
-                            Position :
-                            {{ ticket.position }}
-
-                        </div>
+                        {{ appel.ticket }}
 
                     </div>
 
                     <div class="
-                        bg-blue-100
-                        text-blue-600
+                        bg-blue-500
+                        text-white
                         px-4
                         py-2
                         rounded-xl
+                        text-xl
                         font-bold
                     ">
 
-                        En attente
+                        G{{ appel.guichet }}
 
                     </div>
 
@@ -259,9 +323,209 @@
 
             </div>
 
+        </aside>
+
+    </main>
+
+    <!-- ========================= -->
+    <!-- FLOAT NOTIFICATION -->
+    <!-- ========================= -->
+
+    {% if appels %}
+
+    <div
+        id="floatingNotif"
+        class="
+            fixed
+            inset-0
+            flex
+            items-center
+            justify-center
+            z-50
+            pointer-events-none
+        "
+    >
+
+        <div class="
+            bg-black/40
+            backdrop-blur-md
+            text-white
+            px-16
+            py-10
+            rounded-[40px]
+            shadow-2xl
+            text-center
+            animate-pulse
+        ">
+
+            <div class="
+                text-2xl
+                mb-4
+                text-blue-100
+            ">
+
+                🔔 Nouveau ticket appelé
+
+            </div>
+
+            <div class="
+                text-8xl
+                font-bold
+            ">
+
+                {{ appels[0].ticket }}
+
+            </div>
+
+            <div class="
+                text-4xl
+                mt-4
+                text-green-300
+                font-bold
+            ">
+
+                Guichet {{ appels[0].guichet }}
+
+            </div>
+
         </div>
 
     </div>
+
+    {% endif %}
+
+    <!-- ========================= -->
+    <!-- FOOTER -->
+    <!-- ========================= -->
+
+    <footer class="
+        bg-white
+        border-t
+        px-10
+        py-5
+        flex
+        justify-between
+        items-center
+        text-gray-500
+        text-lg
+    ">
+
+        <div>
+
+            Powered by FileConnect 2035
+
+        </div>
+
+        <div>
+
+            {{ agence.nom }}
+
+        </div>
+
+    </footer>
+
+    <!-- ========================= -->
+    <!-- AUDIO -->
+    <!-- ========================= -->
+
+    <audio
+        id="notifSound"
+        autoplay
+    >
+
+        <source
+            src="/static/sounds/notif.mp3"
+            type="audio/mpeg"
+        >
+
+    </audio>
+
+    <!-- ========================= -->
+    <!-- CLOCK -->
+    <!-- ========================= -->
+
+    <script>
+
+        function updateClock()
+        {
+
+            const now =
+                new Date()
+
+            const heures =
+                String(
+                    now.getHours()
+                ).padStart(2, '0')
+
+            const minutes =
+                String(
+                    now.getMinutes()
+                ).padStart(2, '0')
+
+            const time =
+                heures + ":" + minutes
+
+            const date =
+                now.toLocaleDateString(
+                    'fr-FR',
+                    {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }
+                )
+
+            document
+                .getElementById(
+                    'clock'
+                )
+                .innerText = time
+
+            document
+                .getElementById(
+                    'date'
+                )
+                .innerText = date
+        }
+
+        setInterval(
+            updateClock,
+            1000
+        )
+
+        updateClock()
+
+        // =========================
+        // AUTO HIDE FLOAT
+        // =========================
+
+        const notif =
+            document.getElementById(
+                'floatingNotif'
+            )
+
+        if (notif)
+        {
+
+            setTimeout(() =>
+            {
+
+                notif.style.transition =
+                    "opacity 1s"
+
+                notif.style.opacity = "0"
+
+                setTimeout(() =>
+                {
+                    notif.remove()
+                }, 1000)
+
+            }, 2000)
+
+        }
+
+    </script>
 
 </body>
 </html>

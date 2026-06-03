@@ -10,6 +10,7 @@ import qtawesome as qta
 import requests
 import os
 import shutil
+import webbrowser
 
 
 class SettingsPage(QWidget):
@@ -132,10 +133,21 @@ class SettingsPage(QWidget):
             "fa5s.sync-alt", "  Régénérer le QR code", "#8b5cf6", "#7c3aed"
         )
         regen_btn.clicked.connect(self.regen_qr)
+        display_btn = self._action_btn(
+            "fa5s.tv",
+            "  Ouvrir l'affichage public",
+            "#10b981",
+            "#059669"
+        )
+
+        display_btn.clicked.connect(
+            self.open_display
+        )
 
         qr_actions.addWidget(self.qr_path_label)
         qr_actions.addWidget(dl_btn)
         qr_actions.addWidget(regen_btn)
+        qr_actions.addWidget(display_btn)
         qr_actions.addStretch()
 
         qr_row.addWidget(qr_img_frame)
@@ -279,6 +291,21 @@ class SettingsPage(QWidget):
         wrapper.setLayout(lay)
         wrapper._field = field
         return wrapper
+    def open_display(self):
+
+        try:
+
+            webbrowser.open(
+                "http://127.0.0.1:5000/display"
+            )
+
+        except Exception as e:
+
+            QMessageBox.critical(
+                self,
+                "Erreur",
+                str(e)
+            )
 
     def _action_btn(self, icon_name, label, color, hover_color):
         btn = QPushButton(

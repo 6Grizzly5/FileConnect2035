@@ -5,6 +5,7 @@ from app import db
 from app.models.agence import Agence
 from app.models.service import Service
 from app.models.ticket import Ticket
+from app.models.guichet import Guichet
 from app.models.notification import Notification
 
 from app.services.qr_generator import generer_qr
@@ -205,6 +206,7 @@ def delete_agence():
 
         Notification.query.delete()
         Ticket.query.delete()
+        Guichet.query.delete()
         Service.query.delete()
 
         db.session.delete(agence)

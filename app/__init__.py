@@ -42,6 +42,10 @@ def create_app():
     from app.routes.guichet_routes import (
         guichet_bp
     )
+    
+    from app.routes.appel_routes import (
+        appel_bp
+    )
 
     # -------------------------
     # REGISTER
@@ -71,5 +75,8 @@ def create_app():
         guichet_bp
     )
     
-
+    app.register_blueprint(
+        appel_bp
+    )
+    
     return app

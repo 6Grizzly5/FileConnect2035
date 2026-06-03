@@ -2,36 +2,64 @@ from flask import Blueprint
 from flask import render_template
 
 from app.models.ticket import Ticket
+from app.models.agence import Agence
 
 display_bp = Blueprint(
     'display_bp',
     __name__
 )
 
-# =========================
-# DISPLAY SCREEN
-# =========================
-
-@display_bp.route(
-    '/display'
-)
+@display_bp.route('/display')
 def display():
 
-    current = Ticket.query.filter_by(
-        statut="En cours"
-    ).first()
+    # =========================
+    # TICKETS EN COURS
+    # =========================
 
-    waiting = Ticket.query.filter_by(
-        statut="En attente"
-    ).order_by(
-        Ticket.position.asc()
-    ).limit(5).all()
+    tickets = (
+        Ticket.query
+        .filter_by(statut="En cours")
+        .all()
+    )
+
+    appels = []
+
+    for ticket in tickets:
+
+        appels.append({
+
+            "ticket": ticket.numero,
+
+            "guichet": (
+                ticket.guichet.numero
+                if ticket.guichet else "?"
+            )
+
+        })
+
+    # =========================
+    # AGENCE
+    # =========================
+
+    agence = Agence.query.first()
+
+    if not agence:
+
+        class FakeAgence:
+            nom = "Agence Centrale"
+
+        agence = FakeAgence()
+
+    # =========================
+    # RENDER
+    # =========================
 
     return render_template(
 
         'display.html',
 
-        current=current,
+        appels=appels,
 
-        waiting=waiting
+        agence=agence
+
     )

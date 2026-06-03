@@ -16,144 +16,252 @@
 
 </head>
 
+<!-- ========================= -->
+<!-- AUDIO NOTIFICATION -->
+<!-- ========================= -->
+
+<audio
+    id="notifSound"
+    preload="auto"
+>
+    <source
+        src="/static/audio/notification.mp3"
+        type="audio/mpeg"
+    >
+</audio>
+
 <script>
+
+    // =========================
+    // VARIABLES
+    // =========================
 
     const numero =
         "{{ numero }}"
 
+    let dejaAnnonce =
+        false
+
+    // =========================
+    // UPDATE TICKET
+    // =========================
+
     async function updateTicket()
     {
 
-        const response =
-            await fetch(
-                `/ticket_status/${numero}`
-            )
+        try
+        {
 
-        const data =
-            await response.json()
+            const response =
+                await fetch(
+                    `/ticket_status/${numero}`
+                )
 
-        // ---------------------
-        // UPDATE POSITION
-        // ---------------------
+            const data =
+                await response.json()
 
-        document.getElementById(
-            "position"
-        ).innerText =
-            data.position
-
-
-        // ---------------------
-        // UPDATE GUICHET
-        if(data.guichet){
+            // =====================
+            // POSITION
+            // =====================
 
             document.getElementById(
-                "guichet"
+                "position"
             ).innerText =
-                "Guichet " + data.guichet
-        }
-        // ---------------------
-        // NOTIFICATION
-        // ---------------------
+                data.position ?? "--"
 
-        const notif =
-            document.getElementById(
-                "notification"
+            // =====================
+            // GUICHET
+            // =====================
+
+            if (data.guichet)
+            {
+
+                document.getElementById(
+                    "guichet"
+                ).innerText =
+                    "Guichet " + data.guichet
+            }
+
+            // =====================
+            // NOTIFICATION BOX
+            // =====================
+
+            const notif =
+                document.getElementById(
+                    "notification"
+                )
+
+            // =====================
+            // EN ATTENTE PROCHE
+            // =====================
+
+            if (
+                data.position <= 2
+                &&
+                data.statut == "En attente"
             )
+            {
 
-        // ---------------------
-        // APPROCHE
-        // ---------------------
+                notif.classList.remove(
+                    "hidden"
+                )
 
-        if (
-            data.position <= 2
-            &&
-            data.statut == "En attente"
-        )
+                notif.className =
+                    `
+                    mt-6
+                    bg-orange-100
+                    text-orange-700
+                    p-5
+                    rounded-2xl
+                    text-xl
+                    font-bold
+                    shadow-lg
+                    animate-pulse
+                    `
+
+                notif.innerText =
+                    "Préparez-vous... votre tour arrive dans "
+                    + data.temps_restant
+            }
+
+            // =====================
+            // EN COURS
+            // =====================
+
+            else if (
+                data.statut == "En cours"
+            )
+            {
+
+                notif.classList.remove(
+                    "hidden"
+                )
+
+                notif.className =
+                    `
+                    mt-6
+                    bg-green-100
+                    text-green-700
+                    p-5
+                    rounded-2xl
+                    text-xl
+                    font-bold
+                    shadow-xl
+                    animate-bounce
+                    `
+
+                notif.innerText =
+                    "🔔 Veuillez vous présenter au guichet "
+                    + data.guichet
+
+                // =====================
+                // SON
+                // =====================
+
+                if (!dejaAnnonce)
+                {
+
+                    dejaAnnonce = true
+
+                    const audio =
+                        document.getElementById(
+                            "notifSound"
+                        )
+
+                    audio.play().catch(
+                        err => console.log(err)
+                    )
+
+                    // =====================
+                    // VOIX
+                    // =====================
+
+                    const texte =
+                        `Ticket ${numero},
+                        veuillez vous présenter
+                        au guichet
+                        ${data.guichet}`
+
+                    const speech =
+                        new SpeechSynthesisUtterance(
+                            texte
+                        )
+
+                    speech.lang = "fr-FR"
+
+                    speech.rate = 0.95
+
+                    speech.pitch = 1
+
+                    window.speechSynthesis
+                        .speak(speech)
+                }
+
+            }
+
+            // =====================
+            // TERMINÉ
+            // =====================
+
+            else if (
+                data.statut == "Terminé"
+            )
+            {
+
+                notif.classList.remove(
+                    "hidden"
+                )
+
+                notif.className =
+                    `
+                    mt-6
+                    bg-gray-200
+                    text-gray-700
+                    p-5
+                    rounded-2xl
+                    text-xl
+                    font-bold
+                    shadow
+                    `
+
+                notif.innerText =
+                    "✅ Votre ticket est terminé."
+            }
+
+            // =====================
+            // AUTRE CAS
+            // =====================
+
+            else
+            {
+
+                notif.classList.add(
+                    "hidden"
+                )
+            }
+
+        }
+
+        catch(error)
         {
 
-            notif.classList.remove(
-                "hidden"
+            console.log(
+                "Erreur updateTicket :",
+                error
             )
-
-            notif.className =
-                `
-                mt-6
-                bg-orange-100
-                text-orange-700
-                p-5
-                rounded-2xl
-                text-xl
-                font-bold
-                `
-
-            notif.innerText =
-                "Votre tour est estimé dans "
-                + data.temps_restant
-        }
-
-        // ---------------------
-        // TOUR ACTUEL
-        // ---------------------
-
-        if (
-            data.statut == "En cours"
-        )
-        {
-
-            notif.classList.remove(
-                "hidden"
-            )
-
-            notif.className =
-                `
-                mt-6
-                bg-green-100
-                text-green-700
-                p-5
-                rounded-2xl
-                text-xl
-                font-bold
-                animate-pulse
-                `
-
-            notif.innerText =
-                "Veuillez vous présenter au guichet "
-                + data.guichet
-        }
-
-        // ---------------------
-        // TERMINÉ
-        // ---------------------
-
-        if (
-            data.statut == "Terminé"
-        )
-        {
-
-            notif.classList.remove(
-                "hidden"
-            )
-
-            notif.className =
-                `
-                mt-6
-                bg-gray-200
-                text-gray-700
-                p-5
-                rounded-2xl
-                text-xl
-                font-bold
-                `
-
-            notif.innerText =
-                "Votre ticket est terminé."
         }
 
     }
 
-    // -------------------------
+    // =========================
+    // PREMIER CHARGEMENT
+    // =========================
+
+    updateTicket()
+
+    // =========================
     // AUTO REFRESH
-    // -------------------------
+    // =========================
 
     setInterval(
         updateTicket,

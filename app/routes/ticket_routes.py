@@ -5,7 +5,7 @@ from flask import render_template
 
 from app import db
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from app.models.ticket import Ticket
 from app.models.service import Service
