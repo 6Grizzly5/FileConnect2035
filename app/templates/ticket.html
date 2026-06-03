@@ -25,7 +25,7 @@
     preload="auto"
 >
     <source
-        src="/static/audio/notification.mp3"
+        src="/static/sounds/notification.wav"
         type="audio/mpeg"
     >
 </audio>
@@ -69,6 +69,14 @@
             ).innerText =
                 data.position ?? "--"
 
+            document.getElementById(
+                "heure_estimee"
+            ).innerText =
+                data.heure_estimee ?? "--"
+            
+            document.getElementById(
+                "temps_restant"
+            )
             // =====================
             // GUICHET
             // =====================
@@ -119,9 +127,24 @@
                     animate-pulse
                     `
 
-                notif.innerText =
-                    "Préparez-vous... votre tour arrive dans "
-                    + data.temps_restant
+                if (data.temps_restant <= 0)
+                {
+
+                    notif.innerText =
+                        "⏳ Votre ticket est le prochain à être appelé."
+
+                }
+
+                else
+                {
+
+                    notif.innerText =
+                        "Préparez-vous... votre tour arrive dans "
+                        + data.temps_restant
+                        + " min"
+
+                }
+
             }
 
             // =====================
@@ -335,6 +358,22 @@
                 
 
             </div>
+            <div>
+                <p class="text-gray-500">
+                    Heure estimée d'appel
+                </p>
+                
+                <h3
+                    id="heure_estimee"
+                    class="
+                        text-3xl
+                        font-bold
+                        text-green-500
+                    "
+                >
+                    --
+                </h3>
+            </div>
 
             <div>
 
@@ -380,8 +419,8 @@
             rounded-2xl
         ">
 
-            Une notification vous sera envoyée
-            lorsque votre tour approche.
+            Restez attentif : un signal sonore
+        vous avertira lorsque votre tour arrivera.
 
         </div>
 

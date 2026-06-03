@@ -39,6 +39,8 @@ def verifier_guichets():
             continue
 
         duree = service.duree_moyenne
+        if not ticket_en_cours.heure_debut_service:
+            continue
 
         temps_ecoule = (
             datetime.utcnow() -

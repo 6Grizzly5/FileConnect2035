@@ -179,15 +179,27 @@ def ticket_page():
 @ticket_bp.route('/ticket_status/<numero>')
 def ticket_status(numero):
 
-    ticket = Ticket.query.filter_by(numero=numero).first()
+    ticket = Ticket.query.filter_by(
+        numero=numero
+    ).first()
 
     if not ticket:
-        return jsonify({'error': 'Ticket introuvable'})
+        return jsonify({
+            'error': 'Ticket introuvable'
+        })
 
-    service = Service.query.get(ticket.service_id)
-    duree = service.duree_moyenne if service else 0
+    service = Service.query.get(
+        ticket.service_id
+    )
 
-    temps_restant = (ticket.temps_estime or 0)
+    temps_restant = (
+        ticket.temps_estime or 0
+    )
+
+    heure_estimee = (
+        datetime.now()
+        + timedelta(minutes=temps_restant)
+    ).strftime("%H:%M")
 
     return jsonify({
 
@@ -199,9 +211,14 @@ def ticket_status(numero):
 
         'statut': ticket.statut,
 
-        'temps_restant': f"{temps_restant} min",
+        'temps_restant': temps_restant,
 
-        'service': service.nom if service else '—',
+        'heure_estimee': heure_estimee,
+
+        'service': (
+            service.nom
+            if service else '—'
+        ),
 
         'guichet': (
             ticket.guichet.numero
@@ -209,7 +226,6 @@ def ticket_status(numero):
         )
 
     })
-
 # ─────────────────────────────
 # NEXT TICKET + GUICHET
 # ─────────────────────────────
@@ -281,7 +297,7 @@ def next_ticket():
 
         ticket.id_guichet = guichet.id
 
-        ticket.heure_debut = datetime.utcnow()
+        ticket.heure_debut_service = datetime.utcnow()
 
         db.session.commit()
 

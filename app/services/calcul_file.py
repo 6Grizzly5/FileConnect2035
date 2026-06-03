@@ -58,7 +58,7 @@ def reordonner_file():
         temps = sum(
             _duree_service(tickets_attente[i].service_id)
             for i in range(index)
-        ) + duree
+        )
 
         ticket.temps_estime = temps
 
@@ -117,7 +117,7 @@ def calculer_temps_estime(service_id):
         _duree_service(t.service_id)
         for t in tickets_attente
         if _duree_service(t.service_id) <= duree_nouveau
-    ) + duree_nouveau
+    )
 
     return temps
 
